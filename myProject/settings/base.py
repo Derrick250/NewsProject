@@ -30,7 +30,7 @@ if READ_DOT_ENV_FILE:
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DJANGO_DEBUG', False)
-ALLOWED_HOSTS = [u'127.0.0.1']
+ALLOWED_HOSTS = [u'127.0.0.1','ancient-reef-43394.herokuapp.com']
 
 
 # Application definition
