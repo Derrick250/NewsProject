@@ -7,8 +7,8 @@ urlpatterns = [
     url(r'^snippets/$', views.snippet_list),
     url(r'^snippets/(?P<pk>[0-9]+)/$', views.snippet_detail),
 
-    url(r'^derrick/$', views.user_list),
-    url(r'^derrick/(?P<pk>[0-9]+)/$', views.user_detail),
+    url(r'^users/$', views.user_list),
+    url(r'^users/(?P<pk>[0-9]+)/$', views.user_detail),
 
     url(r'^articles/$', views.article_list),
     url(r'^articles/(?P<pk>[0-9]+)/$', views.article_detail),
