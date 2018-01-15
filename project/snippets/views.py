@@ -83,6 +83,7 @@ def user_list(request):
             mySerializer = InitialSerializer(queryset,many=True)
 
 
+            logger.error("An error occured in trying to present " + mySerializer)
 
             snippets = Articles.objects.all()
             articleSerializer = ArticleSerializer(snippets, many=True)
