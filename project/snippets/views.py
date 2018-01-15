@@ -8,7 +8,7 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from project.snippets.models import Snippet, User, Articles, Comments, UserTags, ArticleTags
 from project.snippets.serializers import SnippetSerializer, UserSerializer, ArticleSerializer,CommentSerializer,UserTagSerializer,ArticleTagSerializer
-import nltk.collocations
+
 from collections import Counter
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
