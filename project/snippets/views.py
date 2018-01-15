@@ -9,9 +9,9 @@ from rest_framework.parsers import JSONParser
 from project.snippets.models import Snippet, User, Articles, Comments, UserTags, ArticleTags
 from project.snippets.serializers import SnippetSerializer, UserSerializer, ArticleSerializer,CommentSerializer,UserTagSerializer,ArticleTagSerializer
 
-from collections import Counter
-from nltk.tokenize import word_tokenize
-from nltk.corpus import stopwords
+# from collections import Counter
+# from nltk.tokenize import word_tokenize
+# from nltk.corpus import stopwords
 import logging
 
 logger = logging.getLogger(__name__)
@@ -122,7 +122,7 @@ def article_list(request):
         serializer = ArticleSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            tagger()
+            # tagger()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
@@ -159,35 +159,35 @@ def article_detail(request, pk):
         return HttpResponse(status=204)
 
 
-def tagger(document, id):
-    with open("myText.txt", "r") as myfile:
-        data = myfile.read().replace('\n', ' ')
-        data = document
-
-    stop_words = set(stopwords.words('english'))
-
-    word_tokens = word_tokenize(data)
-    myList = []
-    for word in word_tokens:
-        newWord = word.lower()
-        if newWord not in stop_words:
-            myList.append(newWord)
-
-    tags = Counter(myList).most_common(5)
-
-
-
-
-
-
-
-    for word in tags:
-        print(word[0])
-        articleTags = ArticleTags()
-        articleTags.articleID = id
-        articleTags.tag = word
-        articleTags.save()
-
+# def tagger(document, id):
+#     with open("myText.txt", "r") as myfile:
+#         data = myfile.read().replace('\n', ' ')
+#         data = document
+#
+#     stop_words = set(stopwords.words('english'))
+#
+#     word_tokens = word_tokenize(data)
+#     myList = []
+#     for word in word_tokens:
+#         newWord = word.lower()
+#         if newWord not in stop_words:
+#             myList.append(newWord)
+#
+#     tags = Counter(myList).most_common(5)
+#
+#
+#
+#
+#
+#
+#
+#     for word in tags:
+#         print(word[0])
+#         articleTags = ArticleTags()
+#         articleTags.articleID = id
+#         articleTags.tag = word
+#         articleTags.save()
+#
 
 
 
