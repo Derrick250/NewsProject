@@ -78,7 +78,7 @@ def user_list(request):
             serializer.save()
             snippets = Articles.objects.all()
             articleSerializer = ArticleSerializer(snippets, many=True)
-            return JsonResponse(articleSerializer.data, status=201)
+            return JsonResponse(articleSerializer.data, safe=False)
         return JsonResponse(serializer.errors, status=400)
 
 @csrf_exempt
