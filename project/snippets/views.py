@@ -79,7 +79,7 @@ def user_list(request):
             serializer.save()
 
 
-            queryset = list(itertools.chain(User.objects.all(), Articles.objects.all()))
+            queryset = list(itertools.chain(User.objects.get(pk=serializer.data["id"]), Articles.objects.all()))
             mySerializer = InitialSerializer(queryset,many=True)
 
 
