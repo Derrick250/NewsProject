@@ -1,4 +1,4 @@
-from django.shortcuts import render
+
 
 # Create your views here.
 
@@ -8,7 +8,13 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from project.snippets.models import Snippet, User, Articles, Comments, UserTags, ArticleTags
 from project.snippets.serializers import SnippetSerializer, UserSerializer, ArticleSerializer,CommentSerializer,UserTagSerializer,ArticleTagSerializer
+import nltk.collocations
+from collections import Counter
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+import logging
 
+logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def snippet_list(request):
@@ -72,7 +78,8 @@ def user_list(request):
             serializer.save()
             article = Articles.objects.all()
             articleSerializer = ArticleSerializer(article, many=True)
-            return JsonResponse(articleSerializer.data, status=201)
+            logger.log("Logging my articles: " + article)
+            return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
 @csrf_exempt
@@ -118,6 +125,7 @@ def article_list(request):
         serializer = ArticleSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            tagger()
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
@@ -152,6 +160,41 @@ def article_detail(request, pk):
     elif request.method == 'DELETE':
         snippet.delete()
         return HttpResponse(status=204)
+
+
+def tagger(document, id):
+    with open("myText.txt", "r") as myfile:
+        data = myfile.read().replace('\n', ' ')
+        data = document
+
+    stop_words = set(stopwords.words('english'))
+
+    word_tokens = word_tokenize(data)
+    myList = []
+    for word in word_tokens:
+        newWord = word.lower()
+        if newWord not in stop_words:
+            myList.append(newWord)
+
+    tags = Counter(myList).most_common(5)
+
+
+
+
+
+
+
+    for word in tags:
+        print(word[0])
+        articleTags = ArticleTags()
+        articleTags.articleID = id
+        articleTags.tag = word
+        articleTags.save()
+
+
+
+
+
 
 @csrf_exempt
 def comment_list(request):

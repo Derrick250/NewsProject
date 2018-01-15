@@ -10,7 +10,7 @@ class SnippetSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
        model = User
-       fields = ('id', 'name', 'age', 'email', 'gender')
+       fields = ('id', 'name', 'age', 'email', 'gender','eduLevel')
 
 
 

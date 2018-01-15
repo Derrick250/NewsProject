@@ -29,6 +29,7 @@ class User(models.Model):
     email = models.EmailField()
     gender = models.TextField()
     password = models.TextField()
+    eduLevel = models.IntegerField()
 
     class Meta:
         ordering = ('name', )
