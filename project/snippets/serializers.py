@@ -37,7 +37,7 @@ class ArticleTagSerializer(serializers.ModelSerializer):
        model = ArticleTags
        fields = ('tag', 'articleID')
 
-class InitialSerializer(serializers.Serializer):
+class InitialSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     title = serializers.TextField()
     url = serializers.TextField()
