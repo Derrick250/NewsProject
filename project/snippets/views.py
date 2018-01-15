@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from project.snippets.models import Snippet, User, Articles, Comments, UserTags, ArticleTags
-from project.snippets.serializers import SnippetSerializer, UserSerializer, ArticleSerializer,CommentSerializer,UserTagSerializer,ArticleTagSerializer
-
+from project.snippets.serializers import SnippetSerializer, UserSerializer, ArticleSerializer,CommentSerializer,UserTagSerializer,ArticleTagSerializer, InitialSerializer
+import itertools
 # from collections import Counter
 # from nltk.tokenize import word_tokenize
 # from nltk.corpus import stopwords
@@ -75,10 +75,18 @@ def user_list(request):
         data = JSONParser().parse(request)
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
+
             serializer.save()
+
+
+            queryset = list(itertools.chain(User.objects.all(), Articles.objects.all()))
+            mySerializer = InitialSerializer(queryset,many=True)
+
+
+
             snippets = Articles.objects.all()
             articleSerializer = ArticleSerializer(snippets, many=True)
-            return JsonResponse(articleSerializer.data, safe=False)
+            return JsonResponse(mySerializer.data, safe=False)
         return JsonResponse(serializer.errors, status=400)
 
 @csrf_exempt

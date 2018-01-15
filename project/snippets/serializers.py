@@ -36,3 +36,13 @@ class ArticleTagSerializer(serializers.ModelSerializer):
     class Meta:
        model = ArticleTags
        fields = ('tag', 'articleID')
+
+class InitialSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.TextField()
+    url = serializers.TextField()
+    paper = serializers.TextField()
+    author = serializers.TextField()
+    date = serializers.DateField()
+    time = serializers.TimeField()
+    description = serializers.TextField()
