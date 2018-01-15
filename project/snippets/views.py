@@ -76,9 +76,6 @@ def user_list(request):
         serializer = UserSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            article = Articles.objects.all()
-            articleSerializer = ArticleSerializer(article, many=True)
-            logger.log("Logging my articles: " + article)
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
