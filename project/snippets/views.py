@@ -78,16 +78,19 @@ def user_list(request):
 
             serializer.save()
 
-
-            queryset = list(itertools.chain(User.objects.get(pk=serializer.data["id"]), Articles.objects.all()))
-            mySerializer = InitialSerializer(queryset,many=True)
-
-
-            logger.error("An error occured in trying to present " + mySerializer)
-
             snippets = Articles.objects.all()
             articleSerializer = ArticleSerializer(snippets, many=True)
-            return JsonResponse(mySerializer.data, safe=False)
+            mySerializer = InitialSerializer(articleSerializer,serializer)
+            mySerializer.is_valid()
+
+            # logger.error('An error occured in trying to present {} '.format(mySerializer))
+            return JsonResponse({
+                'user': serializer.data,
+                'articles': articleSerializer.data,
+                'status': 'true',
+            })
+
+            # return JsonResponse(mySerializer.data, safe=False)
         return JsonResponse(serializer.errors, status=400)
 
 @csrf_exempt
