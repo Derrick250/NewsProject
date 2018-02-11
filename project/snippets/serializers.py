@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
        model = Articles
-       fields = ('title', 'url', 'paper', 'author', 'date', 'time', 'description')
+       fields = ('id', 'title', 'url', 'paper', 'author', 'date', 'time', 'description')
 
 
 class CommentSerializer(serializers.ModelSerializer):

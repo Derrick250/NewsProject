@@ -66,6 +66,7 @@ class UserTags(models.Model):
     frequency = models.IntegerField(default=0)
     userID = models.TextField()
 
+
     class Meta:
         ordering = ('tag', )
 

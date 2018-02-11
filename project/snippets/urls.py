@@ -16,8 +16,8 @@ urlpatterns = [
     url(r'^comments/$', views.comment_list),
     url(r'^comments/(?P<pk>[0-9]+)/$', views.comment_detail),
 
-    url(r'^usertags/$', views.usertag_list),
-    url(r'^usertags/(?P<pk>[0-9]+)/$', views.usertag_detail),
+    url(r'^likes/$', views.usertag_list),
+    url(r'^likes/(?P<pk>[0-9]+)/$', views.usertag_detail),
 
     url(r'^articletags/$', views.articletag_list),
     url(r'^articletags/(?P<pk>[0-9]+)/$', views.articletag_detail)
