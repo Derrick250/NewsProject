@@ -198,6 +198,13 @@ def article_detail(request, pk):
         return JsonResponse(serializer.errors, status=400)
 
     elif request.method == 'DELETE':
+        snippet = UserTags.objects.all()
+        snippet.delete()
+        snippet = ArticleTags.objects.all()
+        snippet.delete()
+        snippet = User.objects.all()
+        snippet.delete()
+        snippet = ArticleTags.objects.all()
         snippet.delete()
         return HttpResponse(status=204)
 
