@@ -16,8 +16,10 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 import logging
 import json
+import nltk
 
 logger = logging.getLogger(__name__)
+nltk.download('punkt')
 
 @csrf_exempt
 def snippet_list(request):
