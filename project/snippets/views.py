@@ -19,7 +19,6 @@ import json
 import nltk
 
 logger = logging.getLogger(__name__)
-nltk.download('punkt')
 
 @csrf_exempt
 def snippet_list(request):
@@ -82,6 +81,7 @@ def user_list(request):
         if serializer.is_valid():
 
             serializer.save()
+            print("the user has been saved with data " + str(serializer.data))
 
             snippets = Articles.objects.all()
             articleSerializer = ArticleSerializer(snippets, many=True)
@@ -135,6 +135,7 @@ def article_list(request):
         snippets = Articles.objects.all()
         serializer = ArticleSerializer(snippets, many=True)
 
+
         return JsonResponse(serializer.data, safe=False)
 
     elif request.method == 'POST':
@@ -176,17 +177,21 @@ def article_detail(request, pk):
         for article in myArticleIDs:
             my_filter_qs = my_filter_qs | Q(pk=article)
 
-        articles = serializers.serialize('json', Articles.objects.filter(my_filter_qs))
+        articles = serializers.serialize('json', Articles.objects.filter(my_filter_qs),fields=('id'))
 
     except Articles.DoesNotExist:
+
         return HttpResponse(status=404)
 
     if request.method == 'GET':
         json_data = json.loads(articles)
 
+
+        print("the results are " + str(json_data))
         totalResponse = []
         for element in json_data :
             totalResponse.append(element['fields'])
+
         return JsonResponse(totalResponse, safe=False)
 
         # return JsonResponse(serializer.data)
@@ -216,8 +221,14 @@ def tagger(document, id):
     #     data = myfile.read().replace('\n', ' ')
     data = document
 
+
+
     stop_words = set(stopwords.words('english'))
 
+    stop_words.update(('and', 'I', 'A', 'And', 'So', 'arnt', 'This', 'When', 'It', 'many', 'Many', 'so', 'cant',
+                            'Yes', 'yes', 'No', 'no', 'These', 'these','\"','?','.','\'','!','@','$','#','%','^',':',';','{','[',']','}','(',')',
+'\u201c','\u2019'
+                       ))
     word_tokens = word_tokenize(data)
     myList = []
     for word in word_tokens:
@@ -225,11 +236,11 @@ def tagger(document, id):
         if newWord not in stop_words:
             myList.append(newWord)
 
+    print("The tags received is " + str(myList))
+
     tags = Counter(myList).most_common(5)
 
-
-
-
+    print("The tags put is " + str(tags))
 
 
 
@@ -380,13 +391,23 @@ def articletag_detail(request, pk):
     Retrieve, update or delete a code snippet.
     """
     try:
-        snippet = ArticleTags.objects.get(pk=pk)
+        snippet = ArticleTags.objects.filter(articleID=pk)
+
+        serialized_data = serializers.serialize('json', ArticleTags.objects.filter(articleID=pk), fields=('tag'))
+        # print("HEHEHE " + str(serialized_data['elements']))
+
+        json_data = json.loads(serialized_data)
+
+        tagResponse = []
+        for element in json_data:
+            tagResponse.append(element['fields'])
     except ArticleTags.DoesNotExist:
         return HttpResponse(status=404)
 
     if request.method == 'GET':
-        serializer = ArticleTagSerializer(snippet)
-        return JsonResponse(serializer.data)
+        # serializer = ArticleTagSerializer(snippet)
+        print ("Lulululu " + str(tagResponse))
+        return JsonResponse(tagResponse, safe=False)
 
     elif request.method == 'PUT':
         data = JSONParser().parse(request)
