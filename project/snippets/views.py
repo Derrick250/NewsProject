@@ -135,6 +135,8 @@ def article_list(request):
         snippets = Articles.objects.all()
         serializer = ArticleSerializer(snippets, many=True)
 
+        print("The data is " + str(serializer.data))
+
 
         return JsonResponse(serializer.data, safe=False)
 
@@ -143,8 +145,18 @@ def article_list(request):
         serializer = ArticleSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            tagger(serializer.data['description'], serializer.data['id'])
-            return JsonResponse(serializer.data, status=201)
+
+            x = tagger(serializer.data['description'], serializer.data['id'])
+
+            serialized_data = serializers.serialize('json', ArticleTags.objects.filter(articleID=serializer.data['id']), fields=('tag'))
+            # print("HEHEHE " + str(serialized_data['elements']))
+
+            json_data = json.loads(serialized_data)
+
+            tagResponse = []
+            for element in json_data:
+                tagResponse.append(element['fields'])
+            return JsonResponse(tagResponse, safe=False)
         return JsonResponse(serializer.errors, status=400)
 
 @csrf_exempt
@@ -157,42 +169,96 @@ def article_detail(request, pk):
         the pk received should be the users ID. Get all tags that have that userID. Get all articles. Then sort the articles by those the number of similar tags then by date&time
         """
 
+        clients = UserTags.objects.filter(userID=pk)
+
+
+
+
+
         serialized_data = serializers.serialize('json', UserTags.objects.filter(userID=pk), fields=('tag'))
         json_data = json.loads(serialized_data)
         myArticleIDs = []
+        my_filter_qs = Q()
+        muchNewerArticles = []
+        myArticles = []
+        print("My json data is " + str(json_data))
+        x = 1
         for element in json_data:
             tag = element['fields']['tag']
-            print("My like snippets are " + str(tag))
+            print("My like snippetseeee are " + str(tag))
+
+
+
+
+
             mySerialized_data = serializers.serialize('json', ArticleTags.objects.filter(tag=tag), fields=('articleID'))
             newArticles = json.loads(mySerialized_data)
 
+
             for article in newArticles:
                 articleID = article['fields']['articleID']
-
+                print("HOOOOOOOOWOOOOOOOOOOO " + str(myArticleIDs) + str(articleID))
                 if int(articleID) not in myArticleIDs:
+
                     myArticleIDs.append(int(articleID))
+                    my_filter_qs = my_filter_qs | Q(pk=article)
+                    # json_data = serializers.serialize('json',Articles.objects.get(id=int(articleID)))
 
 
-        my_filter_qs = Q()
-        for article in myArticleIDs:
-            my_filter_qs = my_filter_qs | Q(pk=article)
+                    snippets = Articles.objects.all()
+                    mySnips = snippets.filter(id=int(articleID))
+                    serializer = ArticleSerializer(mySnips, many=True)
 
-        articles = serializers.serialize('json', Articles.objects.filter(my_filter_qs),fields=('id'))
+                    # json_data = ArticleSerializer(Articles.objects.get(id=int(articleID)), many=True)
+                    # print("WOOOOOOOOOOOHOOOOOOOO " + str(json_data))
+                    # myArticles.append(json_data)
+                    # print("WHAAAAAAAT " + str(myArticles))
+
+                    print("The data is " + str(serializer.data))
+                    myArticles.append(serializer.data)
+
+                    # if x != 1:
+                    #     dictA = json.loads(myArticles)
+                    #     dictB = json.loads(json_data)
+                    #
+                    #     merged_dict = {key: value for (key, value) in (dictA.items() + dictB.items())}
+                    #
+                    #     # string dump of the merged dict
+                    #     myArticles = json.dumps(merged_dict)
+                    #     print("WHAAAAAAAT " + str(myArticles))
+                    #     x = 2
+                    # else:
+                    #     myArticles.append(json_data)
+
+
+
+
+
+
+
+
+
+            # muchNewerArticles = serializers.serialize('json', myArticles)
+            # print("My result is " + str(muchNewerArticles))
+        # articles = serializers.serialize('json', Articles.objects.filter(my_filter_qs))
 
     except Articles.DoesNotExist:
 
         return HttpResponse(status=404)
 
     if request.method == 'GET':
-        json_data = json.loads(articles)
+        # json_data = json.loads(myArticles)
+        #
+        #
+        # # print("the results are " + str(json_data))
+        # totalResponse = []
+        # for element in json_data :
+        #     totalResponse.append(element['fields'])
 
-
-        print("the results are " + str(json_data))
-        totalResponse = []
-        for element in json_data :
-            totalResponse.append(element['fields'])
-
-        return JsonResponse(totalResponse, safe=False)
+        return JsonResponse(myArticles, safe=False)
+        # return JsonResponse( {
+        #     'data': muchNewerArticles
+        # })
 
         # return JsonResponse(serializer.data)
 
@@ -250,6 +316,9 @@ def tagger(document, id):
         articleTags.articleID = id
         articleTags.tag = word
         articleTags.save()
+
+
+    return tags
 
 
 
